@@ -1,5 +1,5 @@
 Package: purrrow
-Title: What the Package Does (One Line, Title Case)
+Title: Out-of-memory data collation into Arrow datasets
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Petr",
@@ -12,10 +12,14 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports: 
     lifecycle,
     purrr (>= 0.3.4),
-    arrow (>= 2.0.0)
-URL: https://github.com/petrbouchal/purrrow
+    arrow (>= 2.0.0),
+    magrittr
+URL: http://petrbouchal.xyz/purrrow, https://github.com/petrbouchal/purrrow
 BugReports: https://github.com/petrbouchal/purrrow/issues
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

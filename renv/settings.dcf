@@ -1,0 +1,9 @@
+external.libraries:
+ignored.packages: docthis, clipr, datapasta, namer, styler, wordcountaddin,
+    togglr, citr, carbonate, reprex, prompt, crayon, clisymbols, devtools,
+    usethis
+package.dependency.fields: Imports, Depends, LinkingTo
+r.version:
+snapshot.type: implicit
+use.cache: TRUE
+vcs.ignore.library: TRUE
