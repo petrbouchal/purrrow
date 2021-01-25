@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# purrrow
+# purrrow <a href='http://petrbouchal.xyz/purrrow'><img src='man/figures/logo.png' align="right" height="138" /></a>
 
 <!-- badges: start -->
 
@@ -26,9 +26,4 @@ remotes::install_github("petrbouchal/purrrow")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(purrrow)
-## basic example code
-```
+TO DO
