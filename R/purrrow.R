@@ -1,6 +1,6 @@
 marrow_dir <- function(.x, .f, ..., .path, .partitioning = c(), .format = "parquet") {
   arrow_temp_dirs <- file.path(tempdir(),
-                               stringi::stri_rand_strings(length(.x), length = 20))
+                               random_string(n = length(.x), length = 30))
 
   purrr::walk2(.x, arrow_temp_dirs, ~{
     ft <- .f(.x)
@@ -22,7 +22,7 @@ marrow_ds <- function(.x, .f, ...,  .arrow_path) {
 
 marrow2_dir <- function(.x, .y, .f, ..., .path, .partitioning = c(), .format = "parquet") {
   arrow_temp_dirs <- file.path(tempdir(),
-                               stringi::stri_rand_strings(length(.x), length = 20))
+                               random_string(n = length(.x), length = 30))
 
   purrr::pwalk(.l = list(.x, .y, arrow_temp_dirs), ~{
     ft <- .f(..1, ..2)
