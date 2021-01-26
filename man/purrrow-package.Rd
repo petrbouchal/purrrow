@@ -6,7 +6,9 @@
 \alias{purrrow-package}
 \title{purrrow: Out-of-memory data collation into Arrow datasets}
 \description{
-What the package does (one paragraph).
+\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+
+Iterate over a function and collate its output into an Arrow dataset, without loading the whole result set into memory.
 }
 \seealso{
 Useful links:

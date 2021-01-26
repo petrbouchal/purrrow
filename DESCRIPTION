@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "pbouchal@gmail.com",
            comment = c(ORCID = "0000-0002-0471-716X"))
-Description: What the package does (one paragraph).
+Description: Iterate over a function and collate its output into an Arrow dataset, without loading the whole result set into memory.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
