@@ -14,12 +14,13 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
-    lifecycle,
-    purrr (>= 0.3.4),
     arrow (>= 2.0.0),
+    purrr (>= 0.3.4),
+    lifecycle,
     magrittr
 URL: http://petrbouchal.xyz/purrrow, https://github.com/petrbouchal/purrrow
 BugReports: https://github.com/petrbouchal/purrrow/issues
 Suggests: 
+    dplyr (>= 1.0.3),
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
