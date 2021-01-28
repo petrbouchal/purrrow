@@ -83,18 +83,120 @@
 <!-- badges: start -->
 
 <p>The goal of purrrow is to provide out-of-memory data collation into Arrow datasets.</p>
+<p>It provides a set of functions with a logic similar to purrr, except that the result is an arrow dataset on disk. Each of these functions iterates the function passed to <code>.f</code> over <code>.x</code> and builds an arrow dataset on disk that contains all the data returned by <code>.f</code> as it iterates over <code>.x</code>.</p>
+<p>For a primer on Arrow datasets and how to work with them in dplyr, see the <a href="https://cran.r-project.org/web/packages/arrow/vignettes/dataset.html">vignette</a> in Arrow (<code><a href="https://arrow.apache.org/docs/r//articles/dataset.html">vignette('dataset', 'arrow')</a></code>).</p>
+<p>This has two advantages:</p>
+<ol>
+<li>it is shorthand compared to building and manually writing and then collating a bunch of arrow datasets</li>
+<li>compared to using <code><a href="https://purrr.tidyverse.org/reference/map.html">purrr::map_dfr()</a></code> followed by <code><a href="https://arrow.apache.org/docs/r//reference/write_dataset.html">arrow::write_dataset()</a></code>, you do not need to have all the data in memory at one time; the binding into one dataset happens out of memory.</li>
+</ol>
+<p>As in <a href="http://purrr.tidyverse.org">purrr</a>, the functions come in multiple flavours, with a suffix indicating the output:</p>
+<ul>
+<li>
+<code>marrow_dir</code>: returns the directory in which the resulting dataset is stored (which is also its <code>.path</code> param)</li>
+<li>
+<code>marrow_ds</code>: returns an arrow <code>Dataset</code> object</li>
+<li>
+<code>marrow_files</code>: returns paths to all the files in the arrow dataset. This can be useful for tracking the files in make-like workflows, e.g. <code>{targets}</code>.</li>
+</ul>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>This is not on CRAN. You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
+<p>This is not yet on CRAN. You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"petrbouchal/purrrow"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="example" class="section level2">
+<div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h2>
-<p>TO DO</p>
+<a href="#getting-started" class="anchor"></a>Getting started</h2>
+<p>The basic logic is as follows:</p>
+<ol>
+<li>pass a function as the .f argument to</li>
+</ol>
+</div>
+<div id="examples" class="section level2">
+<h2 class="hasAnchor">
+<a href="#examples" class="anchor"></a>Examples</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://petrbouchal.xyz/purrrow">purrrow</a></span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">months</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">airquality</span><span class="op">$</span><span class="va">Month</span><span class="op">)</span>
+<span class="va">part_of_mpg</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">month</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">airquality</span><span class="op">[</span><span class="va">airquality</span><span class="op">$</span><span class="va">Month</span><span class="op">==</span><span class="va">month</span>,<span class="op">]</span>
+<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"arrowmp"</span><span class="op">)</span>
+<span class="va">aq_arrow_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/marrow_dir.html">marrow_dir</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">months</span>, .f <span class="op">=</span> <span class="va">part_of_mpg</span>,
+                           .partitioning <span class="op">=</span> <span class="st">"Month"</span>,
+                           .path <span class="op">=</span> <span class="va">td</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/apache/arrow/">arrow</a></span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'arrow'</span>
+<span class="co">#&gt; The following object is masked from 'package:utils':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     timestamp</span>
+<span class="fu"><a href="https://arrow.apache.org/docs/r//reference/open_dataset.html">open_dataset</a></span><span class="op">(</span><span class="va">aq_arrow_dir</span><span class="op">)</span>
+<span class="co">#&gt; FileSystemDataset with 1 Parquet file</span>
+<span class="co">#&gt; Ozone: int32</span>
+<span class="co">#&gt; Solar.R: int32</span>
+<span class="co">#&gt; Wind: double</span>
+<span class="co">#&gt; Temp: int32</span>
+<span class="co">#&gt; Month: int32</span>
+<span class="co">#&gt; Day: int32</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; See $metadata for additional Schema metadata</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"arrowmp2"</span><span class="op">)</span>
+<span class="va">aq_arrow_ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/marrow_dir.html">marrow_ds</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">months</span>, .f <span class="op">=</span> <span class="va">part_of_mpg</span>,
+                         .partitioning <span class="op">=</span> <span class="st">"Month"</span>,
+                         .path <span class="op">=</span> <span class="va">td</span><span class="op">)</span>
+<span class="va">aq_arrow_ds</span>
+<span class="co">#&gt; FileSystemDataset with 1 Parquet file</span>
+<span class="co">#&gt; Ozone: int32</span>
+<span class="co">#&gt; Solar.R: int32</span>
+<span class="co">#&gt; Wind: double</span>
+<span class="co">#&gt; Temp: int32</span>
+<span class="co">#&gt; Month: int32</span>
+<span class="co">#&gt; Day: int32</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; See $metadata for additional Schema metadata</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"arrowmp3"</span><span class="op">)</span>
+<span class="va">aq_arrow_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/marrow_dir.html">marrow_files</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">months</span>, .f <span class="op">=</span> <span class="va">part_of_mpg</span>,
+                               .partitioning <span class="op">=</span> <span class="st">"Month"</span>,
+                               .path <span class="op">=</span> <span class="va">td</span><span class="op">)</span>
+<span class="va">aq_arrow_files</span>
+<span class="co">#&gt; [1] "/var/folders/c8/pj33jytj233g8vr0tw4b2h7m0000gn/T//RtmpmV4o8v/arrowmp3/part-0.parquet"</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'dplyr'</span>
+<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     filter, lag</span>
+<span class="co">#&gt; The following objects are masked from 'package:base':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     intersect, setdiff, setequal, union</span>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/all_equal.html">all_equal</a></span><span class="op">(</span><span class="va">aq_arrow_ds</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">airquality</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+</div>
+<div id="caveats-and-limitations" class="section level2">
+<h2 class="hasAnchor">
+<a href="#caveats-and-limitations" class="anchor"></a>Caveats and limitations</h2>
+<ul>
+<li>no map2 and pmap equivalents yet</li>
+<li>unlike purrr’s map functions, purrrow’s marrow functions do not return an output of the same length as .x. This is intentional.</li>
+<li>currently only Hive-style partitioning is supported <br><span class="math display"><em>T</em><em>O</em><em>D</em><em>O</em></span><br>
+</li>
+<li>there is currently no way to pass further arguments to <code><a href="https://arrow.apache.org/docs/r//reference/write_dataset.html">arrow::write_dataset()</a></code> <br><span class="math display"><em>T</em><em>O</em><em>D</em><em>O</em></span><br>
+</li>
+<li>unlike Arrow’s <code><a href="https://arrow.apache.org/docs/r//reference/write_dataset.html">write_dataset()</a></code>, <code>marrow_*()</code> functions do not infer partitioning from grouping in the dataset returned by .f. This is intentional so as not to introduce confusion in the partitioning.</li>
+<li>.f must provide the column which differentiates the rows returned by each iteration over .x - i.e. there is no equivalent to <code>purrr::*_dfr()</code>’s <code>.id</code> parameter yet <br><span class="math display"><em>T</em><em>O</em><em>D</em><em>O</em></span><br>
+</li>
+<li>Note that arrow will happily write files for a new/differently partitioned dataset into the same directory, so you must take care to clear out/delete a directory before writing an arrow dataset into it.</li>
+</ul>
 </div>
 </div>
   </div>
