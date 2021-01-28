@@ -45,11 +45,11 @@ marrow <- function(.x, .f, ..., .path, .partitioning = c(),
 #' @examples
 #' months <- unique(airquality$Month)
 #' td <- tempdir()
-#' part_of_mpg <- function(month) {
-#'   dt[airquality$Month==month,]
+#' part_of_aq <- function(month) {
+#'   airquality[airquality$Month==month,]
 #' }
 #'
-#' aq_arrow <- purrrow:::marrow_dir(months, part_of_mpg,
+#' aq_arrow <- purrrow:::marrow_dir(months, part_of_aq,
 #'                                   .path = td)
 #' @export
 marrow_dir <- function(.x, .f, ..., .path, .partitioning = c(),
