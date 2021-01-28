@@ -2,4 +2,6 @@
 
 export("%>%")
 export(marrow_dir)
+export(marrow_ds)
+export(marrow_files)
 importFrom(magrittr,"%>%")

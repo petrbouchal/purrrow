@@ -2,9 +2,15 @@
 % Please edit documentation in R/marrrow.R
 \name{marrow_dir}
 \alias{marrow_dir}
+\alias{marrow_ds}
+\alias{marrow_files}
 \title{Iteratively collate output of function into an Arrow dataset out of memory}
 \usage{
 marrow_dir(.x, .f, ..., .path, .partitioning = c(), .format = "parquet")
+
+marrow_ds(.x, .f, ..., .path, .partitioning = c(), .format = "parquet")
+
+marrow_files(.x, .f, ..., .path, .partitioning = c(), .format = "parquet")
 }
 \arguments{
 \item{.x}{vector or list of values for .f to iterate over}
@@ -23,6 +29,10 @@ Columns must exist in output of .f.}
 }
 \value{
 path to new dataset directory; character string of length one.
+
+an Arrow Dataset
+
+character vector containing paths to all files in dataset dir
 }
 \description{
 \ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
@@ -32,6 +42,22 @@ so is suitable for large data objects. The function must return a data.frame or
 tibble. The returned value is a path to the directory containing the
 Arrow dataset.
 }
+\section{Functions}{
+\itemize{
+\item \code{marrow_dir}: Return path to directory containing dataset
+
+\item \code{marrow_ds}: Return Arrow Dataset
+
+\item \code{marrow_files}: Return paths to all files in dataset dir
+}}
+
 \examples{
-# ADD_EXAMPLES_HERE
+months <- unique(airquality$Month)
+td <- tempdir()
+part_of_mpg <- function(month) {
+  dt[airquality$Month==month,]
+}
+
+aq_arrow <- purrrow:::marrow_dir(months, part_of_mpg,
+                                  .path = td)
 }

@@ -1,4 +1,27 @@
 
+marrow <- function(.x, .f, ..., .path, .partitioning = c(),
+                       .format = "parquet", output) {
+  arrow_temp_dirs <- file.path(tempdir(),
+                               random_string(n = length(.x), length = 30))
+
+  purrr::walk2(.x, arrow_temp_dirs, ~{
+    ft <- .f(.x)
+    arrow::write_dataset(ft, path = .y, format = "parquet")
+  })
+
+  arrow_datasets <- purrr::map(arrow_temp_dirs, arrow::open_dataset, format = "parquet")
+  arrow_combined <- arrow::open_dataset(arrow_datasets)
+  arrow::write_dataset(arrow_combined, path = .path,
+                       partitioning = .partitioning, format = .format)
+  unlink(arrow_temp_dirs, recursive = T)
+
+  otpt <- switch(output,
+                 dir = .path,
+                 ds = arrow::open_dataset(.path),
+                 files = list.files(.path, recursive = T, full.names = T))
+  return(otpt)
+}
+
 #' Iteratively collate output of function into an Arrow dataset out of memory
 #'
 #'`r lifecycle::badge('experimental')`
@@ -16,32 +39,41 @@
 #' @param .partitioning character vector of columns to use for partitioning.
 #'   Columns must exist in output of .f.
 #' @param .format "parquet" (the default) or "arrow".
+#' @describeIn marrow Return path to directory containing dataset
 #'
 #' @return path to new dataset directory; character string of length one.
-#' @export
 #' @examples
-#' # ADD_EXAMPLES_HERE
+#' months <- unique(airquality$Month)
+#' td <- tempdir()
+#' part_of_mpg <- function(month) {
+#'   dt[airquality$Month==month,]
+#' }
+#'
+#' aq_arrow <- purrrow:::marrow_dir(months, part_of_mpg,
+#'                                   .path = td)
+#' @export
 marrow_dir <- function(.x, .f, ..., .path, .partitioning = c(),
                        .format = "parquet") {
-  arrow_temp_dirs <- file.path(tempdir(),
-                               random_string(n = length(.x), length = 30))
-
-  purrr::walk2(.x, arrow_temp_dirs, ~{
-    ft <- .f(.x)
-    arrow::write_dataset(ft, path = .y, format = "parquet")
-  })
-
-  arrow_datasets <- purrr::map(arrow_temp_dirs, arrow::open_dataset, format = "parquet")
-  arrow_combined <- arrow::open_dataset(arrow_datasets)
-  arrow::write_dataset(arrow_combined, path = .path,
-                       partitioning = .partitioning, format = .format)
-  unlink(arrow_temp_dirs, recursive = T)
-  return(.path)
+  marrow(.x, .f, ..., .path = .path, .partitioning = .partitioning,
+         .format = .format, output = "dir")
 }
 
+#' @describeIn marrow Return Arrow Dataset
+#' @return an Arrow Dataset
+#' @export
+marrow_ds <- function(.x, .f, ...,  .path, .partitioning = c(),
+                      .format = "parquet") {
+  marrow(.x, .f, ..., .path = .path, .partitioning = .partitioning,
+         .format = .format, output = "ds")
+}
 
-marrow_ds <- function(.x, .f, ...,  .arrow_path) {
-
+#' @describeIn marrow Return paths to all files in dataset dir
+#' @return character vector containing paths to all files in dataset dir
+#' @export
+marrow_files <- function(.x, .f, ...,  .path,  .partitioning = c(),
+                         .format = "parquet") {
+  marrow(.x, .f, ..., .path = .path, .partitioning = .partitioning,
+         .format = .format, output = "files")
 }
 
 marrow2_dir <- function(.x, .y, .f, ..., .path, .partitioning = c(), .format = "parquet") {
