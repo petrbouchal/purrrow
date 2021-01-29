@@ -17,7 +17,8 @@ Imports:
     arrow (>= 2.0.0),
     purrr (>= 0.3.4),
     lifecycle,
-    magrittr
+    magrittr,
+    pins
 URL: http://petrbouchal.xyz/purrrow, https://github.com/petrbouchal/purrrow
 BugReports: https://github.com/petrbouchal/purrrow/issues
 Suggests: 
