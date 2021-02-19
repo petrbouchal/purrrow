@@ -1,13 +1,18 @@
 
 marrow <- function(.x, .f, ..., .path, .partitioning = c(),
-                       .format = "parquet", output) {
+                   .format = "parquet", output) {
   arrow_temp_dirs <- file.path(tempdir(),
                                purrr::map_chr(1:length(.x), ~tempfile()))
 
-  purrr::walk2(.x, arrow_temp_dirs, ~{
-    ft <- .f(.x)
-    arrow::write_dataset(ft, path = .y, format = "parquet")
-  })
+  purrr::walk2(.x = .x, .y = arrow_temp_dirs, .f = function(x, y, ...){
+    if(missing(...)) {
+      ft <- .f(x)
+    } else {
+      ft <- .f(x, ...)
+    }
+
+    arrow::write_dataset(ft, path = y, format = "parquet")
+  }, ...)
 
   arrow_datasets <- purrr::map(arrow_temp_dirs, arrow::open_dataset, format = "parquet")
   arrow_combined <- arrow::open_dataset(arrow_datasets)
@@ -81,7 +86,7 @@ marrow2_dir <- function(.x, .y, .f, ..., .path, .partitioning = c(), .format = "
                                purrr::map_chr(1:.x, ~tempfile()))
 
   purrr::pwalk(.l = list(.x, .y, arrow_temp_dirs), ~{
-    ft <- .f(..1, ..2)
+    ft <- .f(..1, ..2, ...)
     stopifnot(is.data.frame(ft))
     arrow::write_dataset(ft, path = ..3, format = "parquet")
   })
