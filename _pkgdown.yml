@@ -1,1 +1,29 @@
 url: http://petrbouchal.xyz/purrrow
+
+home:
+  title: An R package for out-of-memory data collation into Arrow datasets
+  description: purrr over data to get arrows.
+
+destination: docs
+development:
+  mode: auto
+template:
+  opengraph:
+    image:
+      src: man/figures/card.png
+      alt: "purrrow: an R package for out-of-memory data collation into Arrow datasets"
+    twitter:
+      creator: "@petrbouchal"
+      card: summary_large_image
+
+navbar:
+  structure:
+    left:  [home, reference, news]
+    right: [github, pbhome]
+  components:
+    pbhome:
+      icon: "fa-asterisk fa-lg"
+      href: https://petrbouchal.xyz
+authors:
+  Petr Bouchal:
+    href: https://petrbouchal.xyz
