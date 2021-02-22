@@ -105,7 +105,7 @@ all_equal(aq_arrow_ds %>% collect(), airquality)
 ```
 
 
-## Caveats and limitations
+## Status and limitations
 
 - no map2 and pmap equivalents yet
 - unlike purrr's map functions, purrrow's marrow functions do not return an output of the same length as .x. This is intentional.

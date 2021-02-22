@@ -88,13 +88,13 @@ library(arrow)
 #> 
 #>     timestamp
 open_dataset(aq_arrow_dir)
-#> FileSystemDataset with 1 Parquet file
+#> FileSystemDataset with 5 Parquet files
 #> Ozone: int32
 #> Solar.R: int32
 #> Wind: double
 #> Temp: int32
-#> Month: int32
 #> Day: int32
+#> Month: int32
 #> 
 #> See $metadata for additional Schema metadata
 ```
@@ -105,13 +105,13 @@ aq_arrow_ds <- marrow_ds(.x = months, .f = part_of_mpg,
                          .partitioning = "Month",
                          .path = td)
 aq_arrow_ds
-#> FileSystemDataset with 1 Parquet file
+#> FileSystemDataset with 5 Parquet files
 #> Ozone: int32
 #> Solar.R: int32
 #> Wind: double
 #> Temp: int32
-#> Month: int32
 #> Day: int32
+#> Month: int32
 #> 
 #> See $metadata for additional Schema metadata
 ```
@@ -122,7 +122,11 @@ aq_arrow_files <- marrow_files(.x = months, .f = part_of_mpg,
                                .partitioning = "Month",
                                .path = td)
 aq_arrow_files
-#> [1] "/var/folders/c8/pj33jytj233g8vr0tw4b2h7m0000gn/T//RtmpmV4o8v/arrowmp3/part-0.parquet"
+#> [1] "/var/folders/c8/pj33jytj233g8vr0tw4b2h7m0000gn/T//Rtmpc5tgdL/arrowmp3/Month=5/part-2.parquet"
+#> [2] "/var/folders/c8/pj33jytj233g8vr0tw4b2h7m0000gn/T//Rtmpc5tgdL/arrowmp3/Month=6/part-3.parquet"
+#> [3] "/var/folders/c8/pj33jytj233g8vr0tw4b2h7m0000gn/T//Rtmpc5tgdL/arrowmp3/Month=7/part-0.parquet"
+#> [4] "/var/folders/c8/pj33jytj233g8vr0tw4b2h7m0000gn/T//Rtmpc5tgdL/arrowmp3/Month=8/part-1.parquet"
+#> [5] "/var/folders/c8/pj33jytj233g8vr0tw4b2h7m0000gn/T//Rtmpc5tgdL/arrowmp3/Month=9/part-4.parquet"
 ```
 
 ``` r
@@ -139,7 +143,7 @@ all_equal(aq_arrow_ds %>% collect(), airquality)
 #> [1] TRUE
 ```
 
-## Caveats and limitations
+## Status and limitations
 
 -   no map2 and pmap equivalents yet
 -   unlike purrr’s map functions, purrrow’s marrow functions do not
