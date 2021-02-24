@@ -10,7 +10,7 @@ marrow <- function(.x, .f, ..., .path, .partitioning = c(),
     } else {
       ft <- .f(x, ...)
     }
-    stopifnot(nrow(ft) > 0, "Cannot handle zero-row results.")
+    if(nrow(ft) > 0) usethis::ui_stop("Cannot handle zero-row results.")
     arrow::write_dataset(ft, path = y, format = "parquet")
   }, ...)
 
