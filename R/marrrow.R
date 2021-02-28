@@ -1,8 +1,7 @@
 
 marrow <- function(.x, .f, ..., .path, .partitioning = c(),
                    .format = "parquet", output) {
-  arrow_temp_dirs <- file.path(tempdir(),
-                               purrr::map_chr(1:length(.x), ~tempfile()))
+  arrow_temp_dirs <- purrr::map_chr(1:length(.x), ~tempfile())
 
   purrr::walk2(.x = .x, .y = arrow_temp_dirs, .f = function(x, y, ...){
     if(missing(...)) {
