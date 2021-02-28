@@ -2,7 +2,7 @@ pandoc: 2.7.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2021-02-24T13:14Z
+last_built: 2021-02-28T21:06Z
 urls:
   reference: http://petrbouchal.xyz/purrrow/reference
   article: http://petrbouchal.xyz/purrrow/articles
